@@ -30,22 +30,31 @@ class Converter():
 
         if not self.should_convert(img_path, out_img_path):
             print("Skipping converting %s to %s" % (img_path, out_img_path))
-            return
+            return None
 
-        success = subprocess.call(["magick", "convert",
+        # TODO: should probably return a struct with the input and output paths
+        return subprocess.Popen(["magick", "convert",
             "-crop", "+700+0+1000x1440",
             "-crop", "-860+0+1000x1440",
             img_path, out_img_path])
-        print("Succeeded? %s - Converting %s to %s" % (success, img_path, out_img_path))
 
     def iterate_through_images(self, root_path):
         path_pattern = os.path.join(root_path, "*.png")
         path_list = glob.glob(path_pattern)
+
+        conversion_popens = []
         for path in path_list:
             # ignore images created from the conversion process
             if os.path.basename(path).startswith('_c'):
                 continue
-            self.convert_image(path)
+            popen = self.convert_image(path)
+            if popen is not None:
+                conversion_popens.append(popen)
+
+        # now that we kicked off all the conversions, check if they succeeded
+        for popen in conversion_popens:
+            success = popen.wait()
+            print("Subprocess return code: %s" % success)
 
 def main():
     converter = Converter()
