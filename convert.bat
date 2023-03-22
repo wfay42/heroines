@@ -1,2 +1,2 @@
-.\py-venv\Scripts\python .\raw_img\convert.py
+.\py-venv\Scripts\python .\raw_img\convert.py .\raw_img
 pause

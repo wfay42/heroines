@@ -1,6 +1,7 @@
 import subprocess
 import glob
 import os
+import sys
 
 class Converter():
     def __init__(self, convert_all = False):
@@ -57,8 +58,14 @@ class Converter():
             print("Subprocess return code: %s" % success)
 
 def main():
+    if len(sys.argv) < 2:
+        print("Usage: convert.py directory")
+        return
+
+    root_path = sys.argv[1]
+    print("Convertnig files in director %s" % root_path)
     converter = Converter()
-    converter.iterate_through_images('.\\raw_img')
+    converter.iterate_through_images(root_path)
 
 if __name__ == '__main__':
     main()
