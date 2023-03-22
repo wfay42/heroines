@@ -1,4 +1,5 @@
 import subprocess
+import glob
 import os
 
 class Converter():
@@ -37,10 +38,18 @@ class Converter():
             img_path, out_img_path])
         print("Succeeded? %s - Converting %s to %s" % (success, img_path, out_img_path))
 
+    def iterate_through_images(self, root_path):
+        path_pattern = os.path.join(root_path, "*.png")
+        path_list = glob.glob(path_pattern)
+        for path in path_list:
+            # ignore images created from the conversion process
+            if os.path.basename(path).startswith('_c'):
+                continue
+            self.convert_image(path)
 
 def main():
     converter = Converter()
-    converter.convert_image(".\\raw_img\hazel-01.png")
+    converter.iterate_through_images('.\\raw_img')
 
 if __name__ == '__main__':
     main()
