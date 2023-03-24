@@ -22,7 +22,7 @@ class Converter():
         # then the output is stale and we should update it
         return input_modify_time > output_modify_time
 
-    def convert_image(self, img_path):
+    def crop_images(self, img_path):
         filename = os.path.basename(img_path)
         dirname = os.path.dirname(img_path)
 
@@ -30,7 +30,7 @@ class Converter():
         out_img_path = os.path.join(dirname, out_img_name)
 
         if not self.should_convert(img_path, out_img_path):
-            print("Skipping converting %s to %s" % (img_path, out_img_path))
+            print("Skipping cropping %s to %s" % (img_path, out_img_path))
             return None
 
         # TODO: should probably return a struct with the input and output paths
@@ -39,7 +39,7 @@ class Converter():
             "-crop", "-860+0+1000x1440",
             img_path, out_img_path])
 
-    def iterate_through_images(self, root_path):
+    def crop_original_images(self, root_path):
         path_pattern = os.path.join(root_path, "*.png")
         path_list = glob.glob(path_pattern)
 
@@ -48,7 +48,40 @@ class Converter():
             # ignore images created from the conversion process
             if os.path.basename(path).startswith('_c'):
                 continue
-            popen = self.convert_image(path)
+            popen = self.crop_images(path)
+            if popen is not None:
+                conversion_popens.append(popen)
+
+        # now that we kicked off all the conversions, check if they succeeded
+        for popen in conversion_popens:
+            success = popen.wait()
+            print("Subprocess return code: %s" % success)
+
+    def resize_image(self, img_path):
+        filename = os.path.basename(img_path)
+        dirname = os.path.dirname(img_path)
+
+        out_img_name = "_r-%s" % filename
+        out_img_path = os.path.join(dirname, out_img_name)
+
+        if not self.should_convert(img_path, out_img_path):
+            print("Skipping resizing %s to %s" % (img_path, out_img_path))
+            return None
+
+        # TODO: should probably return a struct with the input and output paths
+        return subprocess.Popen(["magick", "convert",
+            "-resize", "500x720",
+            img_path, out_img_path])
+
+
+    def resize_cropped_images(self, root_path):
+        path_pattern = os.path.join(root_path, "_c*.png")
+        path_list = glob.glob(path_pattern)
+
+        conversion_popens = []
+        for path in path_list:
+
+            popen = self.resize_image(path)
             if popen is not None:
                 conversion_popens.append(popen)
 
@@ -63,9 +96,10 @@ def main():
         return
 
     root_path = sys.argv[1]
-    print("Convertnig files in director %s" % root_path)
+    print("Converting files in directory %s" % root_path)
     converter = Converter()
-    converter.iterate_through_images(root_path)
+    converter.crop_original_images(root_path)
+    converter.resize_cropped_images(root_path)
 
 if __name__ == '__main__':
     main()
