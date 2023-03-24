@@ -62,7 +62,7 @@ class Converter():
         filename = os.path.basename(img_path)
         dirname = os.path.dirname(img_path)
 
-        out_img_name = "_r-%s" % filename
+        out_img_name = "_r%s" % filename
         out_img_path = os.path.join(dirname, out_img_name)
 
         if not self.should_convert(img_path, out_img_path):
