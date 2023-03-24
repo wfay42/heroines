@@ -1,2 +1,2 @@
 ..\py-venv\Scripts\python .\convert.py .
-pause
+timeout /t 5
