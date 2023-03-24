@@ -45,8 +45,9 @@ class Converter():
 
         conversion_popens = []
         for path in path_list:
-            # ignore images created from the conversion process
-            if os.path.basename(path).startswith('_c'):
+            # ignore cropped or resized images created from the conversion process
+            basename = os.path.basename(path)
+            if basename.startswith('_c') or basename.startswith('_r'):
                 continue
             popen = self.crop_images(path)
             if popen is not None:
@@ -99,6 +100,7 @@ def main():
     print("Converting files in directory %s" % root_path)
     converter = Converter()
     converter.crop_original_images(root_path)
+    print("Cropping complete.  Starting resizing.")
     converter.resize_cropped_images(root_path)
 
 if __name__ == '__main__':
