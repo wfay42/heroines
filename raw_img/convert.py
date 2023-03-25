@@ -1,6 +1,7 @@
 import subprocess
 import glob
 import os
+import shutil
 import sys
 
 class Converter():
@@ -91,9 +92,25 @@ class Converter():
             success = popen.wait()
             print("Subprocess return code: %s" % success)
 
+    def copy_files(self, root_path, output_dir):
+        path_pattern = os.path.join(root_path, "_r*.png")
+        path_list = glob.glob(path_pattern)
+        print(path_list)
+
+        for path in path_list:
+            basename = os.path.basename(path)
+            output_path = os.path.join(output_dir, basename)
+
+            if not self.should_convert(path, output_path):
+                print("Skipping copying %s to %s" % (path, output_path))
+                continue
+
+            print("Copying %s to %s" % (path, output_path))
+            shutil.copy2(path, output_path)
+
 def main():
     if len(sys.argv) < 2:
-        print("Usage: convert.py directory")
+        print("Usage: convert.py input_directory [copy_directory]")
         return
 
     root_path = sys.argv[1]
@@ -102,6 +119,11 @@ def main():
     converter.crop_original_images(root_path)
     print("Cropping complete.  Starting resizing.")
     converter.resize_cropped_images(root_path)
+
+    if len(sys.argv) == 3:
+        # copy the resized files somewhere
+        copy_directory = sys.argv[2]
+        converter.copy_files(root_path, copy_directory)
 
 if __name__ == '__main__':
     main()
