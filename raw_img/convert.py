@@ -70,9 +70,15 @@ class Converter():
             print("Skipping resizing %s to %s" % (img_path, out_img_path))
             return None
 
+        # enemy files need to be <640 pixels high
+        dimensions = "500x720"
+        if "enemy" in filename:
+            # dimensions = "250x360"
+            dimensions = "386x500"
+
         # TODO: should probably return a struct with the input and output paths
         return subprocess.Popen(["magick", "convert",
-            "-resize", "500x720",
+            "-resize", dimensions,
             img_path, out_img_path])
 
 
