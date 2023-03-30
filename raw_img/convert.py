@@ -48,7 +48,7 @@ class Converter():
         for path in path_list:
             # ignore cropped or resized images created from the conversion process
             basename = os.path.basename(path)
-            if basename.startswith('_c') or basename.startswith('_r'):
+            if basename.startswith('_c') or basename.startswith('_r') or basename.startswith('ending'):
                 continue
             popen = self.crop_images(path)
             if popen is not None:
@@ -73,8 +73,10 @@ class Converter():
         # enemy files need to be <640 pixels high
         dimensions = "500x720"
         if "enemy" in filename:
-            # dimensions = "250x360"
             dimensions = "386x500"
+        # ending files we resize to the size of the game window
+        elif "ending" in filename:
+            dimensions = "1280x720"
 
         # TODO: should probably return a struct with the input and output paths
         return subprocess.Popen(["magick", "convert",
@@ -85,6 +87,9 @@ class Converter():
     def resize_cropped_images(self, root_path):
         path_pattern = os.path.join(root_path, "_c*.png")
         path_list = glob.glob(path_pattern)
+
+        path_pattern = os.path.join(root_path, "ending*.png")
+        path_list.extend(glob.glob(path_pattern))
 
         conversion_popens = []
         for path in path_list:
