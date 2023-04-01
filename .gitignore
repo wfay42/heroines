@@ -1,2 +1,7 @@
 # ignore images to start
 *.png
+*.xcf
+*.lnk
+/audio
+/img
+/py-venv
