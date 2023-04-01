@@ -3,5 +3,7 @@
 *.xcf
 *.lnk
 /audio
+/effects
+/fonts
 /img
 /py-venv
