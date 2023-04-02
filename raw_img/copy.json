@@ -1,30 +1,33 @@
 {
     "descriptions": {
-        "default_dir": "default directory to copy to",
         "skip": "images to skip copying",
-        "enemies_dir": "directory for enemies",
-        "enemies": "list of images to copy to enemies_dir"
-        "titles_dir": "directory for titles",
+        "enemies": "list of images to copy to enemies_dir",
         "titles": "list of images to copy to titles_dir"
     },
     "skip": [
-        "_r_c-eriko-battle-full-01",
-        "_r_c-eriko-naga-bitten-01",
-        "_r_c-eriko-naga-bitten-03a",
-        "_r_c-eriko-naga-bitten-03b",
-        "_r_c-eriko-naga-bitten-04a",
-        "_r_c-eriko-naga-bitten-04b",
-        "_r_c-hazel-battle-naga-03",
-        "_r_c-hazel-battle-naga-03a",
-        "_r_c-hazel-battle-naga-03a2",
-        "_r_c-hazel-battle-naga-03b",
-        "_r_c-hazel-battle-naga-04a",
-        "_r_c-hazel-battle-naga-04b",
-        "_r_c-maika-naga-bitten-03a",
-        "_r_c-maika-naga-bitten-03b",
-        "_r_c-maika-naga-bitten-04a",
-        "_r_c-maika-naga-bitten-04b",
+        "_r_c-eriko-battle-full-01.png",
+        "_r_c-eriko-naga-bitten-01.png",
+        "_r_c-eriko-naga-bitten-03a.png",
+        "_r_c-eriko-naga-bitten-03b.png",
+        "_r_c-eriko-naga-bitten-04a.png",
+        "_r_c-eriko-naga-bitten-04b.png",
+        "_r_c-hazel-battle-naga-03.png",
+        "_r_c-hazel-battle-naga-03a.png",
+        "_r_c-hazel-battle-naga-03a2.png",
+        "_r_c-hazel-battle-naga-03b.png",
+        "_r_c-hazel-battle-naga-04a.png",
+        "_r_c-hazel-battle-naga-04b.png",
+        "_r_c-maika-naga-bitten-03a.png",
+        "_r_c-maika-naga-bitten-03b.png",
+        "_r_c-maika-naga-bitten-04a.png",
+        "_r_c-maika-naga-bitten-04b.png",
 
-        "_r_c-naga-biting-bust"
+        "_r_c-naga-biting-bust.png"
+    ],
+    "enemies": [
+        "_r_c-enemy-naga-02.png"
+    ],
+    "titles": [
+        "_rending-cover.png"
     ]
 }

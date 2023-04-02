@@ -1,8 +1,19 @@
 import subprocess
 import glob
+import json
 import os
 import shutil
 import sys
+
+class CopyInstructions():
+    def __init__(self, copy_instructions_json_file_path):
+        with open(copy_instructions_json_file_path) as fp:
+            obj = json.load(fp)
+
+        # all of these are lists
+        self.skip = obj['skip']
+        self.enemies = obj['enemies']
+        self.titles = obj['titles']
 
 class Converter():
     def __init__(self, convert_all = False):
@@ -103,7 +114,7 @@ class Converter():
             success = popen.wait()
             print("Subprocess return code: %s" % success)
 
-    def copy_files(self, root_path, output_dir):
+    def copy_files(self, root_path, output_dir, copy_instructions):
         path_pattern = os.path.join(root_path, "_r*.png")
         path_list = glob.glob(path_pattern)
         print(path_list)
@@ -111,6 +122,9 @@ class Converter():
         for path in path_list:
             basename = os.path.basename(path)
             output_path = os.path.join(output_dir, basename)
+
+            if basename in copy_instructions.skip:
+                print("Skipping copying %s because it is in the skip list" % path)
 
             if not self.should_convert(path, output_path):
                 print("Skipping copying %s to %s" % (path, output_path))
@@ -120,21 +134,24 @@ class Converter():
             shutil.copy2(path, output_path)
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: convert.py input_directory [copy_directory]")
+    if len(sys.argv) < 4:
+        print("Usage: convert.py input_directory copy_directory copy_instructions")
         return
 
+    # eagerly initialize everything from arguments to find any issues
     root_path = sys.argv[1]
+    copy_directory = sys.argv[2]
+    copy_instructions_json_file_path = sys.argv[3]
+    copy_instructions = CopyInstructions(copy_instructions_json_file_path)
+
     print("Converting files in directory %s" % root_path)
     converter = Converter()
     converter.crop_original_images(root_path)
     print("Cropping complete.  Starting resizing.")
     converter.resize_cropped_images(root_path)
 
-    if len(sys.argv) == 3:
-        # copy the resized files somewhere
-        copy_directory = sys.argv[2]
-        converter.copy_files(root_path, copy_directory)
+    # copy the resized files somewhere
+    converter.copy_files(root_path, copy_directory, copy_instructions)
 
 if __name__ == '__main__':
     main()
