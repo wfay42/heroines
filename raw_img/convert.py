@@ -6,7 +6,7 @@ import shutil
 import sys
 
 class CopyInstructions():
-    def __init__(self, copy_instructions_json_file_path):
+    def __init__(self, copy_instructions_json_file_path, copy_dirs_json_file_path):
         with open(copy_instructions_json_file_path) as fp:
             obj = json.load(fp)
 
@@ -14,6 +14,13 @@ class CopyInstructions():
         self.skip = obj['skip']
         self.enemies = obj['enemies']
         self.titles = obj['titles']
+
+        with open(copy_dirs_json_file_path) as fp:
+            obj = json.load(fp)
+
+        self.default_dir = obj['default_dir']
+        self.enemies_dir = obj['enemies_dir']
+        self.titles_dir = obj['titles_dir']
 
 class Converter():
     def __init__(self, convert_all = False):
@@ -114,19 +121,33 @@ class Converter():
             success = popen.wait()
             print("Subprocess return code: %s" % success)
 
-    def copy_files(self, root_path, output_dir, copy_instructions):
+    def get_output_dir(self, basename, copy_instructions):
+        output_dir = copy_instructions.default_dir
+        if basename in copy_instructions.skip:
+            output_dir = None
+        elif basename in copy_instructions.enemies:
+            output_dir = copy_instructions.enemies_dir
+        elif basename in copy_instructions.titles:
+            output_dir = copy_instructions.titles_dir
+
+        return output_dir
+
+    def copy_files(self, root_path, copy_instructions):
         path_pattern = os.path.join(root_path, "_r*.png")
         path_list = glob.glob(path_pattern)
         print(path_list)
 
         for path in path_list:
             basename = os.path.basename(path)
-            output_path = os.path.join(output_dir, basename)
 
-            if basename in copy_instructions.skip:
+            output_dir = self.get_output_dir(basename, copy_instructions)
+            if output_dir is None:
                 print("Skipping copying %s because it is in the skip list" % path)
                 continue
 
+            # if we know this file name should be copied and to where,
+            # let's see if it's up to date and doesn't need to be copied
+            output_path = os.path.join(output_dir, basename)
             if not self.should_convert(path, output_path):
                 print("Skipping copying %s to %s" % (path, output_path))
                 continue
@@ -141,9 +162,9 @@ def main():
 
     # eagerly initialize everything from arguments to find any issues
     root_path = sys.argv[1]
-    copy_directory = sys.argv[2]
+    copy_dirs_json_file_path = sys.argv[2]
     copy_instructions_json_file_path = sys.argv[3]
-    copy_instructions = CopyInstructions(copy_instructions_json_file_path)
+    copy_instructions = CopyInstructions(copy_instructions_json_file_path, copy_dirs_json_file_path)
 
     print("Converting files in directory %s" % root_path)
     converter = Converter()
@@ -152,7 +173,7 @@ def main():
     converter.resize_cropped_images(root_path)
 
     # copy the resized files somewhere
-    converter.copy_files(root_path, copy_directory, copy_instructions)
+    converter.copy_files(root_path, copy_instructions)
 
 if __name__ == '__main__':
     main()
