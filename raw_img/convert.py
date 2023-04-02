@@ -125,6 +125,7 @@ class Converter():
 
             if basename in copy_instructions.skip:
                 print("Skipping copying %s because it is in the skip list" % path)
+                continue
 
             if not self.should_convert(path, output_path):
                 print("Skipping copying %s to %s" % (path, output_path))
