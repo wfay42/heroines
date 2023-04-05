@@ -27,7 +27,8 @@
         "_r_c-naga-biting-bust.png"
     ],
     "enemies": [
-        "_r_c-enemy-naga-02.png"
+        "_r_c-enemy-naga-02.png",
+        "_r_c-enemy-nagaqueen-01.png"
     ],
     "titles": [
         "_rending-cover.png"
