@@ -2,13 +2,16 @@
 *.png
 *.xcf
 *.lnk
-/audio
-/effects
-/fonts
-/img
+game/audio
+game/effects
+game/fonts
+game/img
+game/save
 /py-venv
 
+/Output
+
 # ignore non-free plugins
-/js/plugins/VisuMZ_2*
-/js/plugins/VisuMZ_3*
-/js/plugins/VisuMZ_4*
+/game/js/plugins/VisuMZ_2*
+/game/js/plugins/VisuMZ_3*
+/game/js/plugins/VisuMZ_4*
