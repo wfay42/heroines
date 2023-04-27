@@ -3,6 +3,9 @@ null,
 {"id":1,"expanded":true,"name":"MAP001","order":1,"parentId":0,"scrollX":787.5,"scrollY":628.5},
 {"id":2,"expanded":false,"name":"MAP002","order":2,"parentId":0,"scrollX":411.55555555555554,"scrollY":320.8888888888889},
 {"id":3,"expanded":true,"name":"Naga Root Entrance","order":3,"parentId":0,"scrollX":787.5,"scrollY":628.5},
-{"id":4,"expanded":false,"name":"Naga Cave 1F","order":4,"parentId":3,"scrollX":1624.5,"scrollY":628.5},
-{"id":5,"expanded":false,"name":"Naga Cave 2F","order":5,"parentId":3,"scrollX":787.5,"scrollY":628.5}
+{"id":4,"expanded":false,"name":"Naga Cave 1F","order":4,"parentId":3,"scrollX":1624.5,"scrollY":636.5},
+{"id":5,"expanded":false,"name":"Naga Cave 2F","order":5,"parentId":3,"scrollX":787.5,"scrollY":628.5},
+{"id":6,"expanded":true,"name":"Adventurer's Guild","order":6,"parentId":0,"scrollX":0,"scrollY":0},
+{"id":7,"expanded":false,"name":"Adventurer Office","order":7,"parentId":6,"scrollX":0,"scrollY":0},
+{"id":8,"expanded":false,"name":"World Map","order":8,"parentId":0,"scrollX":0,"scrollY":0}
 ]
