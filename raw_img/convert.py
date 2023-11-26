@@ -89,12 +89,12 @@ class Converter():
             return None
 
         # enemy files need to be <640 pixels high
-        dimensions = "500x720"
+        dimensions = "1000x1080"
         if "enemy" in filename:
             dimensions = "386x500"
         # ending files we resize to the size of the game window
         elif "ending" in filename:
-            dimensions = "1280x720"
+            dimensions = "1920x1080"
 
         # TODO: should probably return a struct with the input and output paths
         return subprocess.Popen(["magick", "convert",
