@@ -91,7 +91,7 @@ class Converter():
         # enemy files need to be <640 pixels high
         dimensions = "1000x1080"
         if "enemy" in filename:
-            dimensions = "386x500"
+            dimensions = "694x900"
         # ending files we resize to the size of the game window
         elif "ending" in filename:
             dimensions = "1920x1080"
