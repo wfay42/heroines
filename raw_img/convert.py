@@ -41,7 +41,8 @@ class Converter():
         # then the output is stale and we should update it
         return input_modify_time > output_modify_time
 
-    def crop_images(self, img_path):
+    def crop_image(self, img_path):
+        """Crop a single image; skipping if not needed."""
         filename = os.path.basename(img_path)
         dirname = os.path.dirname(img_path)
 
@@ -59,6 +60,9 @@ class Converter():
             img_path, out_img_path])
 
     def crop_original_images(self, root_path):
+        """
+        Takes original (raw) images, and crops them appropriately
+        """
         path_pattern = os.path.join(root_path, "*.png")
         path_list = glob.glob(path_pattern)
 
@@ -68,7 +72,7 @@ class Converter():
             basename = os.path.basename(path)
             if basename.startswith('_c') or basename.startswith('_r') or basename.startswith('ending'):
                 continue
-            popen = self.crop_images(path)
+            popen = self.crop_image(path)
             if popen is not None:
                 conversion_popens.append(popen)
 
@@ -78,6 +82,10 @@ class Converter():
             print("Subprocess return code: %s" % success)
 
     def resize_image(self, img_path):
+        """
+        Resize a specific image. Have pre-defined resolutions for enemies and endings.
+        Everything else gets a different resolution
+        """
         filename = os.path.basename(img_path)
         dirname = os.path.dirname(img_path)
 
@@ -145,9 +153,12 @@ class Converter():
                 print("Skipping copying %s because it is in the skip list" % path)
                 continue
 
+            # output file name should remove the _r_c cruft for resized/cropped
+            new_name = basename.replace("_r", "").replace("_c-", "")
+
             # if we know this file name should be copied and to where,
             # let's see if it's up to date and doesn't need to be copied
-            output_path = os.path.join(output_dir, basename)
+            output_path = os.path.join(output_dir, new_name)
             if not self.should_convert(path, output_path):
                 print("Skipping copying %s to %s" % (path, output_path))
                 continue
