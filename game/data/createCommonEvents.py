@@ -67,6 +67,26 @@ def update_affected_by(event_item_parameters_list):
     event_item_parameters_list[3] = output_state
     return event_item_parameters_list
 
+def is_variable_conditional(parameters):
+    # p[0] == 1 means the condition is on Variable
+    return parameters[0] == 1
+
+def update_monster_level(event_item_parameters_list):
+    """
+    Updates the conditional parameter list for 'if character's monster level = [1,2,3,4]'
+    event_item_parameters_list is updated and returned
+    """
+    if not is_variable_conditional(event_item_parameters_list):
+        return
+
+    input_var = event_item_parameters_list[1]
+    # TODO: only works going from Naga to Wolf
+    output_var = input_var + 5
+    event_item_parameters_list[1] = output_var
+    return event_item_parameters_list
+
+
+
 def update_change_state(event_item_parameters_list):
     input_state = event_item_parameters_list[3]
     output_state = get_new_state(input_state)
@@ -93,6 +113,7 @@ def walk_event_list(input_event):
         if event_item['code'] == 111:
             # should find the state for Naga and replace with Wolf
             update_affected_by(event_item['parameters'])
+            update_monster_level(event_item['parameters'])
         elif event_item['code'] == 313:
             # change state
             update_change_state(event_item['parameters'])
@@ -118,7 +139,7 @@ walk_event_list(input_common_events[INPUT_EVENTS_MAPPING['maika-wolf']])
 with open('eriko-new.json', 'w') as fp:
     json.dump(output_eriko_event, fp, indent=2)
 
-with open('all-new.json', 'w') as fp:
+with open('CommonsEvents_.json', 'w') as fp:
     json.dump(input_common_events, fp)
 
 """
