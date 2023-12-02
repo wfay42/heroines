@@ -46,6 +46,9 @@ Things to update
     1 - Character ID (1 being Eriko)
     6 - Conditional on "State" which is the 6th radio button
     12 - State ID 12 is "Naga"
+
+ Naga Level variables are 2,3,4
+ Wolf Level variables are 7,8,9
 """
 
 #
