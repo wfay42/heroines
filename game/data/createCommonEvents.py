@@ -33,10 +33,11 @@ def replace_naga_portrait_string(input):
         ).replace('-naga-bitten-05', '-wolf-04')
 
 ## Do straight string manipulation
-eriko_line = lines[4]
-eriko_new_line = replace_naga_portrait_string(eriko_line)
-with open('eriko-strreplace.json', 'w') as fp:
-    fp.write(eriko_new_line)
+def string_manip():
+    eriko_line = lines[4]
+    eriko_new_line = replace_naga_portrait_string(eriko_line)
+    with open('eriko-strreplace.json', 'w') as fp:
+        fp.write(eriko_new_line)
 
 def get_new_state(input_state):
     output_state = input_state
@@ -46,11 +47,27 @@ def get_new_state(input_state):
         output_state = STATE_MAPPING['Wolf Confusion']
     return output_state
 
+def is_state_conditional(parameters):
+    # p[0] == 4 means Actor is being inspected
+    # p[2] == 6 means State is what is being compared
+    return parameters[0] == 4 and parameters[2] == 6
+
 def update_affected_by(event_item_parameters_list):
     """
     Updates the conditional parameter list for 'if character affected by <state>'
     event_item_parameters_list is updated and returned
     """
+
+    # only operate on conditionals around State
+    if not is_state_conditional(event_item_parameters_list):
+        return
+
+    input_state = event_item_parameters_list[3]
+    output_state = get_new_state(input_state)
+    event_item_parameters_list[3] = output_state
+    return event_item_parameters_list
+
+def update_change_state(event_item_parameters_list):
     input_state = event_item_parameters_list[3]
     output_state = get_new_state(input_state)
     event_item_parameters_list[3] = output_state
@@ -76,6 +93,9 @@ def walk_event_list(input_event):
         if event_item['code'] == 111:
             # should find the state for Naga and replace with Wolf
             update_affected_by(event_item['parameters'])
+        elif event_item['code'] == 313:
+            # change state
+            update_change_state(event_item['parameters'])
         elif event_item['code'] == 357:
             # update the Battle Portrait. Need to go nested a bit
             update_battle_portrait_357(event_item['parameters'])
