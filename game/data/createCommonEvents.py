@@ -26,6 +26,12 @@ STATE_MAPPING = {
     'Wolf Confusion': 15
 }
 
+def update_variables(input):
+    """Take Naga variables and add 5"""
+    if input < 5:
+        return input + 5
+    return input
+
 def replace_naga_portrait_string(input):
     return input.replace('-naga-bitten-03c', '-wolf-01'
         ).replace('-naga-bitten-03d', '-wolf-02'
@@ -80,17 +86,23 @@ def update_monster_level(event_item_parameters_list):
         return
 
     input_var = event_item_parameters_list[1]
-    # TODO: only works going from Naga to Wolf
-    output_var = input_var + 5
+    output_var = update_variables(input_var)
     event_item_parameters_list[1] = output_var
     return event_item_parameters_list
-
-
 
 def update_change_state(event_item_parameters_list):
     input_state = event_item_parameters_list[3]
     output_state = get_new_state(input_state)
     event_item_parameters_list[3] = output_state
+    return event_item_parameters_list
+
+def update_change_variable(event_item_parameters_list):
+    # [2, 2, 1, 0, 1] - updates variables 2 through 2, 1 mean "Add", 0 mean "Constant", 1 is the value to add
+    input_variable_value = event_item_parameters_list[0]
+    # TODO: only works for Naga to Wolf
+    new_variable_value = update_variables(input_variable_value)
+    event_item_parameters_list[0] = new_variable_value
+    event_item_parameters_list[1] = new_variable_value
     return event_item_parameters_list
 
 def update_battle_portrait_357(event_item_parameters_list):
@@ -114,6 +126,9 @@ def walk_event_list(input_event):
             # should find the state for Naga and replace with Wolf
             update_affected_by(event_item['parameters'])
             update_monster_level(event_item['parameters'])
+        elif event_item['code'] == 122:
+            # Change control variable
+            update_change_variable(event_item['parameters'])
         elif event_item['code'] == 313:
             # change state
             update_change_state(event_item['parameters'])
@@ -139,7 +154,7 @@ walk_event_list(input_common_events[INPUT_EVENTS_MAPPING['maika-wolf']])
 with open('eriko-new.json', 'w') as fp:
     json.dump(output_eriko_event, fp, indent=2)
 
-with open('CommonsEvents_.json', 'w') as fp:
+with open('CommonEvents_.json', 'w') as fp:
     json.dump(input_common_events, fp)
 
 """
