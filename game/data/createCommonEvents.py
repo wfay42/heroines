@@ -10,16 +10,96 @@ with open('CommonEvents.json', 'r') as fp:
 # mapping of heroine name to their CommonEvent ID for their Naga event
 # which we can use as an input
 INPUT_EVENTS_MAPPING = {
-    'eriko': 3,
-    'hazel': 4,
-    'maika': 5
+    'eriko-naga': 3,
+    'hazel-naga': 4,
+    'maika-naga': 5,
+
+    'eriko-wolf': 9,
+    'hazel-wolf': 10,
+    'maika-wolf': 11,
 }
 
-input_eriko_event = input_common_events[INPUT_EVENTS_MAPPING['eriko']]
+STATE_MAPPING = {
+    'Naga': 12,
+    'Naga Confusion': 13,
+    'Wolf': 14,
+    'Wolf Confusion': 15
+}
+
+def replace_naga_portrait_string(input):
+    return input.replace('-naga-bitten-03c', '-wolf-01'
+        ).replace('-naga-bitten-03d', '-wolf-02'
+        ).replace('-naga-bitten-04c', '-wolf-03'
+        ).replace('-naga-bitten-05', '-wolf-04')
+
+## Do straight string manipulation
+eriko_line = lines[4]
+eriko_new_line = replace_naga_portrait_string(eriko_line)
+with open('eriko-strreplace.json', 'w') as fp:
+    fp.write(eriko_new_line)
+
+def get_new_state(input_state):
+    output_state = input_state
+    if input_state == STATE_MAPPING['Naga']:
+        output_state = STATE_MAPPING['Wolf']
+    elif input_state == STATE_MAPPING['Naga Confusion']:
+        output_state = STATE_MAPPING['Wolf Confusion']
+    return output_state
+
+def update_affected_by(event_item_parameters_list):
+    """
+    Updates the conditional parameter list for 'if character affected by <state>'
+    event_item_parameters_list is updated and returned
+    """
+    input_state = event_item_parameters_list[3]
+    output_state = get_new_state(input_state)
+    event_item_parameters_list[3] = output_state
+    return event_item_parameters_list
+
+def update_battle_portrait_357(event_item_parameters_list):
+    obj = event_item_parameters_list[3]
+    value = obj['Filename:str']
+    new_value = replace_naga_portrait_string(value)
+    obj['Filename:str'] = new_value
+
+def update_battle_portrait_657(event_item_parameters_list):
+    value = event_item_parameters_list[0]
+    new_value = replace_naga_portrait_string(value)
+    event_item_parameters_list[0] = new_value
+
+def walk_event_list(input_event):
+    """
+    This walks through the list of actions in a CommonEvent and alters the steps as needed
+    """
+    event_list = input_event.get('list')
+    for event_item in event_list:
+        if event_item['code'] == 111:
+            # should find the state for Naga and replace with Wolf
+            update_affected_by(event_item['parameters'])
+        elif event_item['code'] == 357:
+            # update the Battle Portrait. Need to go nested a bit
+            update_battle_portrait_357(event_item['parameters'])
+        elif event_item['code'] == 657:
+            # the other place to update Battle Portrait. Nested differently
+            update_battle_portrait_657(event_item['parameters'])
+
+    input_name = input_event['name']
+    input_event['name'] = input_name.replace('Naga', 'Wolf')
+    return input_event
+
+
+input_eriko_event = input_common_events[INPUT_EVENTS_MAPPING['eriko-wolf']]
 print(input_eriko_event)
 
-with open('eriko.json', 'w') as fp:
-    json.dump(input_eriko_event, fp, indent=2)
+output_eriko_event = walk_event_list(input_common_events[INPUT_EVENTS_MAPPING['eriko-wolf']])
+walk_event_list(input_common_events[INPUT_EVENTS_MAPPING['hazel-wolf']])
+walk_event_list(input_common_events[INPUT_EVENTS_MAPPING['maika-wolf']])
+
+with open('eriko-new.json', 'w') as fp:
+    json.dump(output_eriko_event, fp, indent=2)
+
+with open('all-new.json', 'w') as fp:
+    json.dump(input_common_events, fp)
 
 """
 Things to update
@@ -34,7 +114,7 @@ Things to update
  Those may be array-index based and thus fragile to change.
  Maybe if I can key on it based on the "code" ?
 
- .list[*] where .code = 313
+ .list[*] where .code = 313 (Change State)
     .parameters - [0, 1, 0, 13]
     0 - "Fixed" instead of "Variable"
     1 - Character ID (1 being Eriko)

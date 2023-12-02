@@ -35,3 +35,19 @@ For example, for Nagas
   * Shows any Bad Ends that happen based on set variables
   * Otherwise, resets all battle portraits and `<Character> Naga Level` variables,
   then recovers the whole party.
+
+# How to generate TF Common Events
+
+Pre-reqs
+* 5 New Common Events
+  * Battle
+  * Battle Eriko
+  * Battle Hazel
+  * Battle Maika
+  * Battle Lifecycle
+
+We then use createCommonEvents.py to update the 3 character-specific events. We need to update
+* State they are affected by that we later remove
+* Variable to increment and later reference in conditionals
+* Battle Portrait Filenames (actor IDs remain the same)
+* State when Variable hits 4+
