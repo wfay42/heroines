@@ -34,7 +34,8 @@
     "enemies": [
         "_r_c-enemy-naga-02.png",
         "_r_c-enemy-nagaqueen-01.png",
-        "_r_c-enemy-wolf-01.png"
+        "_r_c-enemy-wolf-01.png",
+        "_r_c-enemy-wolf-02.png"
     ],
     "titles": [
         "_rending-cover.png"
